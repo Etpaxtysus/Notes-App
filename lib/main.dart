@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 void main() async {
   // Init Note Isar Database
   WidgetsFlutterBinding.ensureInitialized();
-  // await NoteDatabase.initialize();
+  await NoteDatabase.initialize();
   runApp(ChangeNotifierProvider(
     create: (context) => NoteDatabase(),
     child: const MyApp(),
