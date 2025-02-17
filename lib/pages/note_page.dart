@@ -33,6 +33,7 @@ class _NotePagesState extends State<NotePages> {
                     context
                         .read<NoteDatabase>()
                         .createNote(textController.text);
+                    textController.clear();
                     Navigator.pop(context);
                   },
                   child: const Text("Create"),
@@ -45,9 +46,34 @@ class _NotePagesState extends State<NotePages> {
   void readNotes() {
     context.read<NoteDatabase>().fetchNotes();
   }
+
   // Update Note
+  void updateNote(Note note) {
+    textController.text = note.text;
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+              title: Text("Update Note"),
+              content: TextField(controller: textController),
+              actions: [
+                MaterialButton(
+                  onPressed: () {
+                    context
+                        .read<NoteDatabase>()
+                        .updateNote(note.id, textController.text);
+                    textController.clear();
+                    Navigator.pop(context);
+                  },
+                  child: const Text("Update"),
+                )
+              ],
+            ));
+  }
 
   // Delete Note
+  void deleteNote(int id) {
+    context.read<NoteDatabase>().deleteNote(id);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,8 +91,20 @@ class _NotePagesState extends State<NotePages> {
             itemCount: currentNotes.length,
             itemBuilder: (context, index) {
               final note = currentNotes[index];
+              // List Tile UI
               return ListTile(
                 title: Text(note.text),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                        onPressed: () => updateNote(note),
+                        icon: Icon(Icons.edit)),
+                    IconButton(
+                        onPressed: () => deleteNote(note.id),
+                        icon: Icon(Icons.delete)),
+                  ],
+                ),
               );
             }));
   }
